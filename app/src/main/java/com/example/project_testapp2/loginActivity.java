@@ -45,13 +45,10 @@ public class loginActivity extends AppCompatActivity {
             }
         });
         //validateUser();
-
     }
-
     Boolean validateUser(){
         //SharedPreferences.Editor editor = savedText.edit();
-
-        if(!username.getText().toString().isEmpty() && password.getText().toString().isEmpty()) {
+        if(!username.getText().toString().isEmpty() && !password.getText().toString().isEmpty()) {
             DocumentReference docRef = db.collection("users").document(username.getText().toString());
             docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
@@ -64,12 +61,11 @@ public class loginActivity extends AppCompatActivity {
                             Log.d("Failed", "No such document");
                         }
                     } else {
-                        Log.d("Error", "get failed with ", task.getException());
+                        Log.d("Error", "asdget failed with ", task.getException());
                     }
                 }
             });
         }
-
         return false;
     }
 }
