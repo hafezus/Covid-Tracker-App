@@ -8,5 +8,8 @@
         <item
             android:id="@id/secondFragment"
             android:title="Map" />
+        <item
+            android:id="@+id/thirdFragment"
+            android:title="Test Result" />
     </group>
 </menu>

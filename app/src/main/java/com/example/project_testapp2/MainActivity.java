@@ -4,7 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.widget.Toolbar;
@@ -30,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         //NavigationView navigationView = findViewById(R.id.navigationView);
         navigationView = findViewById(R.id.navigationView);
-        drawer  =findViewById(R.id.drawerLayout);
+        drawer =findViewById(R.id.drawerLayout);
 
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.firstFragment)
@@ -40,6 +42,11 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
+        Intent intent  = getIntent();
+
+        Log.d("Intent variable 1", ""+ intent.getStringExtra("username"));
+        Log.d("Intent variable 2", ""+ intent.getStringExtra("password"));
+
         //Check if already logged in
     }
     @Override
@@ -47,6 +54,10 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true); //Login once only, prevents backtrack to login page
     }
 
 }
