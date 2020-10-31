@@ -3,4 +3,8 @@
     <color name="colorPrimary">#DFD0CC</color>
     <color name="colorPrimaryDark">#955240</color>
     <color name="colorAccent">#9A4D4D</color>
+    <color name="dashboard_card1">#B68686</color>
+    <color name="dashboard_card2">#C57373</color>
+    <color name="dashboard_card3">#D5996C</color>
+    <color name="dashboard_card4">#E4CC78</color>
 </resources>

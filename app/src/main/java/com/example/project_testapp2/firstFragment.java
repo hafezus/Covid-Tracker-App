@@ -63,16 +63,8 @@ public class firstFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View root =  inflater.inflate(R.layout.fragment_first, container, false);
-        final TextView textView = root.findViewById(R.id.textView3);
+        final TextView textView = root.findViewById(R.id.active_cases_label);
         textView.setClickable(true);
-        /*textView.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-                Navigation.findNavController(root).navigate(R.id.navigateToSecond);
-            }
-        });*/
-
-    //.setOnClickListener(Navigation.findNavController(root).navigate(R.id.navigateToSecond));
 
         return root;
     }

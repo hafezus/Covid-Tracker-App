@@ -1,24 +1,178 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/ConstraintLayout"
+    android:id="@+id/LinearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
+    android:orientation="vertical"
     tools:context=".firstFragment">
 
     <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
+        android:id="@+id/textView11"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-light"
+        android:gravity="center_horizontal"
+        android:padding="15dp"
+        android:text="Today"
+        android:textSize="50dp" />
 
-        android:text="1"
-        android:textColor="#fff"
-        android:textSize="100sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal|center_vertical"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@color/dashboard_card1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/total_cases_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:width="150dp"
+                android:fontFamily="sans-serif-black"
+                android:gravity="center"
+                android:padding="15dp"
+                android:text="New Cases"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:width="150dp"
+                android:gravity="center"
+                android:padding="15dp"
+                android:text="111,111,111"
+                android:textColor="#fff"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@color/dashboard_card2"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/deaths_today_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:width="150dp"
+                android:fontFamily="sans-serif-black"
+                android:gravity="center"
+                android:padding="15dp"
+                android:text="Deaths"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/deaths_today_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:width="150dp"
+                android:gravity="center"
+                android:padding="15dp"
+                android:text="222,222,222"
+                android:textColor="#fff"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal|center_vertical"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@color/dashboard_card3"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/active_cases_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:width="150dp"
+                android:fontFamily="sans-serif-black"
+                android:gravity="center"
+                android:padding="15dp"
+                android:text="Active"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/active_cases_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:width="150dp"
+                android:gravity="center"
+                android:padding="15dp"
+                android:text="333,333,333"
+                android:textColor="#fff"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@color/dashboard_card4"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/recovered_today_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:width="150dp"
+                android:fontFamily="sans-serif-black"
+                android:gravity="center"
+                android:padding="15dp"
+                android:text="Recovered"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/recovered_today_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:width="150dp"
+                android:gravity="center"
+                android:padding="15dp"
+                android:text="444,444,444"
+                android:textColor="#fff"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

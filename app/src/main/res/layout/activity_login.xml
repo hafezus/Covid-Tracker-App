@@ -65,6 +65,7 @@
         android:layout_marginTop="25dp"
         android:layout_marginEnd="100dp"
         android:ems="10"
+        android:fontFamily="sans-serif-light"
         android:hint="Enter Password"
         android:imeOptions="actionNext"
         android:inputType="textPassword"

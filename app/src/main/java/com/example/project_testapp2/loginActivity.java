@@ -32,38 +32,15 @@ public class loginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        username = (EditText) findViewById(R.id.et_username);
-        password = (EditText) findViewById(R.id.et_password);
-        loginBtn = (Button) findViewById(R.id.btn_login);
+        getSupportActionBar().hide();
+        setContentView(R.layout.loading_splash);
+
         sp_login = getSharedPreferences("loginInfo", MODE_PRIVATE);
+        //SharedPreferences.Editor editor = sp_login.edit();
+        //editor.putString("username", "");
+        //editor.putString("password", "");
+        //editor.commit();
         checkUser(sp_login.getString("username",""), sp_login.getString("password",""));
-
-        /*if(sp_login.getString("username","").equals("") && sp_login.getString("username","").equals("")){
-            Log.d("Login validation", "There is nothing in sharedPrefs");
-        }
-        else{
-            sp_login.getString("username", "");
-            sp_login.getString("password", "");
-
-            Log.d("Login validation", "sharedPrefs has username and password: " + sp_login.getString("username", "") + " - "+ sp_login.getString("password", ""));
-        }*/
-
-        loginBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (view.getId() == R.id.btn_login){
-                    //Toast.makeText(getApplicationContext(),"Inner Anonymous class implementation",Toast.LENGTH_SHORT).show();
-                    try {
-                        validateLogin();
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    } catch (NoSuchAlgorithmException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
         //validateUser();
     }
     public Boolean validateLogin() throws UnsupportedEncodingException, NoSuchAlgorithmException {
@@ -85,12 +62,11 @@ public class loginActivity extends AppCompatActivity {
                             intent.putExtra("username",document.getId());
                             intent.putExtra("password",document.getString("password"));
 
-                            //SharedPreferences.Editor editor = sp_login.edit();
-                            //editor.putString("username", document.getId());
-                            //editor.putString("password", document.getString("password"));
-                            //editor.commit();
-                            loginActivity.this.startActivity(intent);
-                            //finish(); //See if this is what we need to stop backtracking to login
+                            SharedPreferences.Editor editor = sp_login.edit();
+                            editor.putString("username", document.getId());
+                            editor.putString("password", document.getString("password"));
+                            editor.commit();
+                            loginActivity.this.startActivity(intent);;
                         } else {
                             Log.d("Failed", "Wrong Credentials");
                         }
@@ -126,6 +102,8 @@ public class loginActivity extends AppCompatActivity {
                             loginActivity.this.startActivity(intent);
                             //finish(); //See if this is what we need to stop backtracking to login
                         } else {
+                            setContentView(R.layout.activity_login);
+                            initializeGui();
                             Log.d("Failed", "Wrong Credentials");
                         }
                     } else {
@@ -138,5 +116,28 @@ public class loginActivity extends AppCompatActivity {
             //do nothing, continue
             return;
         }
+    }
+
+    public void initializeGui(){
+
+        username = (EditText) findViewById(R.id.et_username);
+        password = (EditText) findViewById(R.id.et_password);
+        loginBtn = (Button) findViewById(R.id.btn_login);
+        loginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (view.getId() == R.id.btn_login){
+                    //Toast.makeText(getApplicationContext(),"Inner Anonymous class implementation",Toast.LENGTH_SHORT).show();
+                    try {
+                        validateLogin();
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    } catch (NoSuchAlgorithmException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
     }
 }
