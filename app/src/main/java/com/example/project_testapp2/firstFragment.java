@@ -98,12 +98,12 @@ public class firstFragment extends Fragment {
         active_today = root.findViewById(R.id.active_today_tv);
         recovered_today = root.findViewById(R.id.recovered_today_tv);
         String today = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).format(LocalDateTime.now().minusDays(1));
-        String yesterday = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).format(LocalDateTime.now().minusDays(3));
-        Log.v("Today's date", today + " ------ " + yesterday);
+        String past_date = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).format(LocalDateTime.now().minusDays(5));
+        Log.v("Today's date", today + " ------ " + past_date);
 
         //"https://api.covid19api.com/country/united-arab-emirates?from=2020-10-31T00:00:00Z&to=2020-10-31T23:59:59Z"
 
-        new JsonTask().execute(MessageFormat.format("https://api.covid19api.com/country/united-arab-emirates?from={0}&to={1}", yesterday, today));
+        new JsonTask().execute(MessageFormat.format("https://api.covid19api.com/country/united-arab-emirates?from={0}&to={1}", past_date, today));
 
         return root;
     }
@@ -178,23 +178,23 @@ public class firstFragment extends Fragment {
                 for(int i =0; i<json_array.length(); i++){
                     Log.v("Json array item: ", json_array.get(i).toString());
                 }
-                json_array.getJSONObject(0); //Yesterday
-                json_array.getJSONObject(1); //Today
+                Log.v("item 1: ", json_array.getJSONObject(json_array.length()-2).toString()); //Yesterday
+                Log.v("item 2: ", json_array.getJSONObject(json_array.length()-1).toString()); //Today
 
                 //Cases today = Total confirmed as per today - total confirmed as per yesterday
-                cases_today.setText(String.valueOf(Integer.parseInt(json_array.getJSONObject(1).getString("Confirmed"))
-                        - Integer.parseInt(json_array.getJSONObject(0).getString("Confirmed"))
+                cases_today.setText(String.valueOf(Integer.parseInt(json_array.getJSONObject(json_array.length()-1).getString("Confirmed"))
+                        - Integer.parseInt(json_array.getJSONObject(json_array.length()-2).getString("Confirmed"))
                 ));
 
                 //Deaths today = Total deaths as per today - total deaths as per yesterday
-                deaths_today.setText(String.valueOf(Integer.parseInt(json_array.getJSONObject(1).getString("Deaths"))
-                                - Integer.parseInt(json_array.getJSONObject(0).getString("Deaths"))));
+                deaths_today.setText(String.valueOf(Integer.parseInt(json_array.getJSONObject(json_array.length()-1).getString("Deaths"))
+                                - Integer.parseInt(json_array.getJSONObject(json_array.length()-2).getString("Deaths"))));
 
                 //Recovered today = Total recovered as per today - total recovered as per yesterday
-                recovered_today.setText(String.valueOf(Integer.parseInt(json_array.getJSONObject(1).getString("Recovered"))
-                        - Integer.parseInt(json_array.getJSONObject(0).getString("Recovered"))));
+                recovered_today.setText(String.valueOf(Integer.parseInt(json_array.getJSONObject(json_array.length()-1).getString("Recovered"))
+                        - Integer.parseInt(json_array.getJSONObject(json_array.length()-2).getString("Recovered"))));
 
-                active_today.setText(json_array.getJSONObject(1).getString("Active"));
+                active_today.setText(json_array.getJSONObject(json_array.length()-1).getString("Active"));
 
             } catch (JSONException e) {
                 e.printStackTrace();
