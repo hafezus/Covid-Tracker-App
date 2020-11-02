@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:text="2"
+        android:text="Map"
         android:textColor="#fff"
         android:textSize="100sp"
         android:textStyle="bold"
