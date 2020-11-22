@@ -57,7 +57,7 @@ public class loginActivity extends AppCompatActivity {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
                             Log.d("Success", "DocumentSnapshot data: " + document.getData());
-                            Toast.makeText(loginActivity.this, "Saving data...", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(loginActivity.this, "Logging in...", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(loginActivity.this, MainActivity.class);
                             intent.putExtra("username",document.getId());
                             intent.putExtra("password",document.getString("password"));
@@ -68,6 +68,7 @@ public class loginActivity extends AppCompatActivity {
                             editor.commit();
                             loginActivity.this.startActivity(intent);;
                         } else {
+                            Toast.makeText(loginActivity.this, "Failed to log in: Wrong Credentials...", Toast.LENGTH_SHORT).show();
                             Log.d("Failed", "Wrong Credentials");
                         }
                     } else {
@@ -89,7 +90,7 @@ public class loginActivity extends AppCompatActivity {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists() && username.equals(document.getId()) && password.equals(document.getString("password"))) {
                             Log.d("Success", "DocumentSnapshot data: " + document.getData());
-                            Toast.makeText(loginActivity.this, "Saving data...", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(loginActivity.this, "Logging in...", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(loginActivity.this, MainActivity.class);
 
                             intent.putExtra("username", username);
@@ -114,6 +115,9 @@ public class loginActivity extends AppCompatActivity {
         }
         else{
             //do nothing, continue
+            setContentView(R.layout.activity_login);
+            initializeGui();
+            Log.d("Failed", "Wrong Credentials");
             return;
         }
     }
@@ -139,5 +143,10 @@ public class loginActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true); //Once returning to login, prevents backtrack to main menu
     }
 }

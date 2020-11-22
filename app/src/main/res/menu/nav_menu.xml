@@ -20,6 +20,7 @@
             android:layout_height="2dp"
             android:background="#000000" />
         <item
+            android:id="@+id/logout"
             android:icon="@drawable/ic_log_out_icon"
             android:title="Logout" />
     </group>

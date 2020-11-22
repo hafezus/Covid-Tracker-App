@@ -99,7 +99,7 @@ public class firstFragment extends Fragment {
         recovered_today = root.findViewById(R.id.recovered_today_tv);
         String today = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).format(LocalDateTime.now().minusDays(1));
         String past_date = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).format(LocalDateTime.now().minusDays(5));
-        Log.v("Today's date", today + " ------ " + past_date);
+        //Log.v("Today's date", today + " ------ " + past_date);
 
         //"https://api.covid19api.com/country/united-arab-emirates?from=2020-10-31T00:00:00Z&to=2020-10-31T23:59:59Z"
 
@@ -111,11 +111,6 @@ public class firstFragment extends Fragment {
 
         protected void onPreExecute() {
             super.onPreExecute();
-
-            //pd = new ProgressDialog(MainActivity.this);
-            //pd.setMessage("Please wait");
-            //pd.setCancelable(false);
-            //pd.show();
         }
 
         protected String doInBackground(String... params) {
@@ -139,7 +134,7 @@ public class firstFragment extends Fragment {
 
                 while ((line = reader.readLine()) != null) {
                     buffer.append(line+"\n");
-                    Log.d("Response: ", "> " + line);   //here u ll get whole response...... :-)
+                    //Log.d("Response: ", "> " + line);   //here u ll get whole response...... :-)
 
                 }
                 return buffer.toString();
@@ -168,18 +163,9 @@ public class firstFragment extends Fragment {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            /*if (pd.isShowing()){
-                pd.dismiss();
-            }*/
-            JsonText = result;
-            Log.v("Result JSON", result);
+
             try {
                 JSONArray json_array = new JSONArray(result);
-                for(int i =0; i<json_array.length(); i++){
-                    Log.v("Json array item: ", json_array.get(i).toString());
-                }
-                Log.v("item 1: ", json_array.getJSONObject(json_array.length()-2).toString()); //Yesterday
-                Log.v("item 2: ", json_array.getJSONObject(json_array.length()-1).toString()); //Today
 
                 //Cases today = Total confirmed as per today - total confirmed as per yesterday
                 cases_today.setText(String.valueOf(Integer.parseInt(json_array.getJSONObject(json_array.length()-1).getString("Confirmed"))
@@ -199,8 +185,6 @@ public class firstFragment extends Fragment {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-            //Log.v("Json Body:", JsonText);
         }
     }
 
