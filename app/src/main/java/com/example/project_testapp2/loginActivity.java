@@ -49,18 +49,21 @@ public class loginActivity extends AppCompatActivity {
             /*if(sp_login.getString("username","").equals("") && sp_login.getString("username","").equals("")){
 
             }*/
+            //Log.d("validateLogin", username.getText().toString());
+           // Log.d("validateLogin", password.getText().toString());
             DocumentReference docRef = db.collection("users").document(username.getText().toString());
             docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
-                        if (document.exists()) {
+                        //Log.d("Validating Login", document.getId() + ", " + document.getString("password"));
+                        if (document.exists() && username.getText().toString().equals(document.getId()) && password.getText().toString().equals(document.getString("password"))) {
                             Log.d("Success", "DocumentSnapshot data: " + document.getData());
                             Toast.makeText(loginActivity.this, "Logging in...", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(loginActivity.this, MainActivity.class);
-                            intent.putExtra("username",document.getId());
-                            intent.putExtra("password",document.getString("password"));
+                            intent.putExtra("username", document.getId());
+                            intent.putExtra("password", document.getString("password"));
 
                             SharedPreferences.Editor editor = sp_login.edit();
                             editor.putString("username", document.getId());
@@ -88,18 +91,15 @@ public class loginActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
+                        Log.d("Logging in", "Actual Password: " + document.getString("password") + ", Entered Password:" + password);
                         if (document.exists() && username.equals(document.getId()) && password.equals(document.getString("password"))) {
-                            Log.d("Success", "DocumentSnapshot data: " + document.getData());
+                            Log.d("Login", "DocumentSnapshot data: " + document.getData());
                             Toast.makeText(loginActivity.this, "Logging in...", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(loginActivity.this, MainActivity.class);
 
                             intent.putExtra("username", username);
                             intent.putExtra("password", password);
 
-                            //SharedPreferences.Editor editor = sp_login.edit();
-                            //editor.putString("username", document.getId());
-                            //editor.putString("password", document.getString("password"));
-                            //editor.commit();
                             loginActivity.this.startActivity(intent);
                             //finish(); //See if this is what we need to stop backtracking to login
                         } else {

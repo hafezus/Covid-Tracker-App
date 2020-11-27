@@ -54,13 +54,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         sp_login = getSharedPreferences("loginInfo", MODE_PRIVATE);
 
-
-        //logout.setOnCl();
-        //Intent intent  = getIntent();
-
-        //Log.d("Intent variable 1", ""+ intent.getStringExtra("username"));
-        //Log.d("Intent variable 2", ""+ intent.getStringExtra("password"));
-
         //Check if already logged in
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
