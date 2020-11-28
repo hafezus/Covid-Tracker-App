@@ -134,7 +134,7 @@ public class thirdFragment extends Fragment {
 
                                 }
                                 else {
-
+                                    //Do nothing
                                 }
                             } else {
                                 Log.d("Error", "Failed with ", task.getException());
@@ -160,7 +160,7 @@ public class thirdFragment extends Fragment {
 
                                 }
                                 else {
-
+                                    //Do nothing
                                 }
                             } else {
                                 Log.d("Error", "Failed with ", task.getException());
@@ -169,7 +169,7 @@ public class thirdFragment extends Fragment {
                     });
                 }
                 covidStatus_toggle.setEnabled(false);
-                covidStatus_toggle.postDelayed(runnable, 5000);
+                covidStatus_toggle.postDelayed(runnable, 5000); //Deactivate the button for 5 seconds
             }});
 
 

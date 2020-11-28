@@ -39,13 +39,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Intent service = new Intent(MainActivity.this, TracingService.class);
+        startService(service);
         //NavigationView navigationView = findViewById(R.id.navigationView);
         navigationView = findViewById(R.id.navigationView);
         drawer =findViewById(R.id.drawerLayout);
         logout = findViewById(R.id.logout);
 
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.firstFragment, R.id.secondFragment, R.id.thirdFragment)
+                R.id.firstFragment) //Initialize R.id.secondFragment and R.id.thirdFragment if you want to change the way drawer menu works
                 .setDrawerLayout(drawer)
                 .build();
         navController = Navigation.findNavController(this, R.id.fragment);
@@ -53,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationUI.setupWithNavController(navigationView, navController);
 
         sp_login = getSharedPreferences("loginInfo", MODE_PRIVATE);
+
+        //Start service
 
         //Check if already logged in
 
@@ -65,15 +70,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Toast.makeText(getApplicationContext(), "Logout", Toast.LENGTH_SHORT).show();
                     Log.v("Logout Button CLicked: ", "Reached Here");
                     SharedPreferences.Editor editor = sp_login.edit();
-                    editor.putString("username", "");
-                    editor.putString("password", "");
+                    editor.putString("username", ""); //Clear shared preferences
+                    editor.putString("password", ""); //Clear shared preferences
                     editor.commit();
                     Intent intent = new Intent(MainActivity.this, loginActivity.class);
 
                     MainActivity.this.startActivity(intent);
                 }
                 //This is for maintaining the behavior of the Navigation view
-                NavigationUI.onNavDestinationSelected(menuItem,navController);
+                NavigationUI.onNavDestinationSelected(menuItem, navController);
                 //This is for closing the drawer after acting on it
                 drawer.closeDrawer(GravityCompat.START);
                 return true;
