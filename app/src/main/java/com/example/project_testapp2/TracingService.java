@@ -101,77 +101,12 @@ public class TracingService extends Service {
 
                 // if new feed is newer than old feed
                 if (app != null) {
-                    //Log.v(SERVICE_LOG, "Updated feed available.");
-                    //cases += "\n" + newFeed;
-
                     // display notification
                     final long yourmilliseconds = System.currentTimeMillis();
-                    //SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
-                    //Date currentTime = new Date(yourmilliseconds);
 
-                        /*
-                        db.collection("locations").addSnapshotListener(new EventListener<QuerySnapshot>() { //Retrieve locations from locations->username->locations subcollection
-
-                            //Need to filter locations and retrieve locations only within the past 72hours. So locations retrieved <= 72*24*3600 seconds
-                            @Override
-                            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                                if (e != null) {
-                                    Log.v(SERVICE_LOG, e.getMessage());
-                                }
-
-                                for (final DocumentChange doc1 : documentSnapshots.getDocumentChanges()) {
-                                    if (doc1.getType() == DocumentChange.Type.ADDED && doc1.getDocument().getBoolean("covidStatus") == true) { //Now retrieving subcollections only of covid-positive locations
-                                        Log.d("Get User Name (Documents)", doc1.getDocument().getId());
-                                        doc1.getDocument().getReference().collection("locations").addSnapshotListener(new EventListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                                                if (e != null) {
-                                                    Log.d("", "Error : " + e.getMessage());
-                                                }
-
-                                                for (final DocumentChange doc2 : documentSnapshots.getDocumentChanges()) {
-                                                    if (doc2.getType() == DocumentChange.Type.ADDED && (doc2.getDocument().getTimestamp("timestamp").getSeconds() <= System.currentTimeMillis() - 259200 * 1000)) { //259200 is 3 days
-
-                                                        Log.d("Coordinates (Subcollection documents)", doc2.getDocument().getGeoPoint("location").toString() + ", Timestamp: " + doc2.getDocument().getTimestamp("timestamp").getSeconds()); //Retrieving all locations of covid-positive users
-                                                        Log.d("Current time in millis", System.currentTimeMillis() + ""); //Retrieving all locations of covid-positive users
-
-                                                        final CovidEntry tempCovidEntry
-                                                                = new CovidEntry(
-                                                                doc2.getDocument().getGeoPoint("location").getLatitude(),
-                                                                doc2.getDocument().getGeoPoint("location").getLongitude(),
-                                                                doc2.getDocument().getTimestamp("timestamp").getSeconds()
-                                                        );
-
-                                                        Log.d("HashMaps", tempCovidEntry.getLat() + " " + tempCovidEntry.getLng()
-                                                                + " " + tempCovidEntry.getTimestamp());
-                                                        try {
-                                                            app.latestLocations.add(tempCovidEntry);
-                                                            //tempArray.add(tempCovidEntry);
-                                                            //Log.d("tempArray", tempArray.toString());
-                                                            //app.setLatestLocations(tempArray);
-                                                        } catch (Exception error) {
-                                                            Log.d("ERROR", error.getMessage() + ", Nothing to add to array");
-                                                        }
-                                                        //app.latestLocations.;
-
-                                                        //Get only locations where location.timestamp < 3 days
-                                                        //1) Store this data in application context ArrayList variable
-                                                    }
-                                                }
-                                            }
-                                        });
-
-
-                                    }
-                                }
-
-                            }
-                        });
-                         */
 
                     CollectionReference locationsRef = db.collection("Locations");
                     Query positiveCases = locationsRef.whereEqualTo("covidStatus", true);
-                    //Log.d("positive cases", positiveCases +"");
 
                     positiveCases.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
 
@@ -181,6 +116,12 @@ public class TracingService extends Service {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     if((System.currentTimeMillis() - document.getTimestamp("timestamp").getSeconds()*1000) < 259200000){ //259200
                                         Log.d("Positive case", document.getString("username"));
+
+                                        app.latestLocations.add(new CovidEntry(
+                                                document.getGeoPoint("location").getLatitude(),
+                                                document.getGeoPoint("location").getLongitude(),
+                                                document.getTimestamp("timestamp").getSeconds()
+                                        ));
                                     }
                                 }
                             } else {
@@ -188,6 +129,9 @@ public class TracingService extends Service {
                             }
                         }
                     });
+
+
+
                 }
 
                 //3) Send current user's location every 30 minutes (create a function for this)
@@ -200,7 +144,9 @@ public class TracingService extends Service {
                 //Store into db here as well
                 //sendNotification(/*newFeed,*/ currentTime);
                 try {
-                    Log.d(SERVICE_LOG, app.getLatestLocations() + "");
+                    for(CovidEntry entry : app.latestLocations){
+                        Log.d(SERVICE_LOG, entry.getLat() + ", " +  entry.getLng() + ", " + entry.getTimestamp());
+                    }
                 } catch (NullPointerException e) {
                     Log.d("ERROR", "latestLocations is empty");
                 }

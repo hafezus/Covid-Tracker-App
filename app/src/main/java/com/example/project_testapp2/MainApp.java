@@ -12,16 +12,16 @@ public class MainApp extends Application {
     private long timeMillis = -1;
     //private ArrayList<HashMap<HashMap<Double, Double>, Long>> latestLocations;
 
-    public ArrayList<CovidEntry> latestLocations;
+    public ArrayList<CovidEntry> latestLocations = new ArrayList<>();
     /*
     Each entry consists of:
-    (CovidTest: Time in millis, (Latitude: Float, Longitude: Float))
+    (CovidEntry: (Latitude: Double, Longitude: Double, Time in millis: Long)
 
         [
-            (177734313, (25.123124, 54.1235344)),
-            (154723412, (25.123342, 54.1231123)),
-            (124535435, (25.123342, 54.1231123)),
-            (168796852, (25.132134, 55.3245132)),
+            (25.123124, 54.1235344, 1777343131),
+            (25.199823, 55.4241321, 1606833814),
+            (25.323424, 54.7564154, 1777343153),
+            (25.313423, 54.4352436, 1777343143),
         ]
 
         If any one the entries contain True send COVID alert;
