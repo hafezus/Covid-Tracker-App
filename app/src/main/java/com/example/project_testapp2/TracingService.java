@@ -114,9 +114,12 @@ public class TracingService extends Service {
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
-                                    if((System.currentTimeMillis() - document.getTimestamp("timestamp").getSeconds()*1000) < 259200000){ //259200
+                                    if((System.currentTimeMillis() - document.getTimestamp("timestamp").getSeconds()*1000) <= 259200000){ //259200 is 3 days in seconds
                                         Log.d("Positive case", document.getString("username"));
 
+                                        //1,606,851,792,000
+                                        //259,200,000
+                                        //Log.d("Compare time of System.time vs. Firestore.getTimeStamp", System.currentTimeMillis() + ", " + document.getTimestamp("timestamp").getSeconds()*1000);
                                         app.latestLocations.add(new CovidEntry(
                                                 document.getGeoPoint("location").getLatitude(),
                                                 document.getGeoPoint("location").getLongitude(),
@@ -129,9 +132,6 @@ public class TracingService extends Service {
                             }
                         }
                     });
-
-
-
                 }
 
                 //3) Send current user's location every 30 minutes (create a function for this)

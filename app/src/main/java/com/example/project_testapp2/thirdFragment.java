@@ -90,7 +90,7 @@ public class thirdFragment extends Fragment {
             }
         };
 
-        final DocumentReference docRef = db.collection("locations").document(sp_login.getString("username", ""));
+        final DocumentReference docRef = db.collection("users").document(sp_login.getString("username", ""));
 
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -116,7 +116,7 @@ public class thirdFragment extends Fragment {
         covidStatus_toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                final DocumentReference docRef = db.collection("locations").document(sp_login.getString("username", ""));
+                final DocumentReference docRef = db.collection("users").document(sp_login.getString("username", ""));
 
                 if (covidStatus_toggle.isChecked()) {
                     //update firestore locations record set covidStatus field : True
