@@ -97,7 +97,7 @@ public class thirdFragment extends Fragment {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
-                    Log.d("Valid Location doc", document.getId() + ", Status: " + document.getBoolean("covidStatus"));
+                    //Log.d("Valid Location doc", document.getId() + ", Status: " + document.getBoolean("covidStatus"));
                     if (document.exists()) {
                         Log.d("Success", "DocumentSnapshot data: " + document.getData());
                         //Toast.makeText(loginActivity.this, "Logging in...", Toast.LENGTH_SHORT).show();

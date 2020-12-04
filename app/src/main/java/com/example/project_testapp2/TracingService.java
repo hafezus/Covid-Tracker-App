@@ -15,6 +15,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.app.Service;
 import android.content.Intent;
@@ -26,6 +27,8 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -65,8 +68,14 @@ public class TracingService extends Service implements LocationListener {
     private Timer timer;
     private Timer timer2;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private GoogleApiClient googleApiClient;
+    private LocationRequest locationRequest;
+    private SharedPreferences sp_login;
 
-    //protected LocationListener locationListener;
+
+    protected MyLocationListener locationListener;
+
+    protected LocationManager locationManager;
     //GPSTracker mGPS = new GPSTracker(this);
     //private SharedPreferences sp_login;
     //double currentLat;
@@ -86,15 +95,34 @@ public class TracingService extends Service implements LocationListener {
     public void onCreate() {
         Log.v(SERVICE_LOG, "Service created");
         app = (MainApp) getApplication();
+        sp_login = getApplicationContext().getSharedPreferences("loginInfo", MODE_PRIVATE);
+        locationListener = new MyLocationListener(googleApiClient, sp_login, getApplicationContext());
+        /*googleApiClient = new GoogleApiClient.Builder(getApplication().getApplicationContext())
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();*/
+        locationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(1000*60*60)
+                .setFastestInterval(1000*60*60);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        //locationListener = new MyLocationListener(googleApiClient, sp_login);
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        //locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000*10, 0, (LocationListener) locationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000*60*30, 0, locationListener);
+        //LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, (com.google.android.gms.location.LocationListener) locationListener);
         //sp_login = getSharedPreferences("loginInfo", MODE_PRIVATE);
 
-        //locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        //locationListener = new MyLocationListener();
-
-
-
-
         startTimer();
+    }
+
+    @Override
+    public void onStart(Intent intent, int startId) {
+        super.onStart(intent, startId);
+
     }
 
     @Override
@@ -184,7 +212,7 @@ public class TracingService extends Service implements LocationListener {
             @Override
             public void run() {
                 Log.v(SERVICE_LOG, "Timer task started");
-                if (app != null) {
+                if (app != null && googleApiClient.isConnected()) {
                     final long yourmilliseconds = System.currentTimeMillis();
                     CollectionReference locationsRef = db.collection("Locations");
                     //1) get current location
@@ -274,12 +302,6 @@ public class TracingService extends Service implements LocationListener {
     {
 
     } // end class saveContact
-
-        @Override
-        public void onProviderDisabled(String provider) {}
-
-        @Override
-        public void onProviderEnabled(String provider) {}
 
 }
 

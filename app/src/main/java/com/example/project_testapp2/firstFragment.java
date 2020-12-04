@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseException;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -120,36 +121,41 @@ public class firstFragment extends Fragment {
         new JsonTask().execute(MessageFormat.format("https://api.covid19api.com/country/united-arab-emirates?from={0}&to={1}", past_date, today));
 
 
-        final DocumentReference docRef = db.collection("users").document(sp_login.getString("username", ""));
+        try {
+            final DocumentReference docRef = db.collection("users").document(sp_login.getString("username", ""));
 
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    Log.d("Valid Location doc", document.getId() + ", Status: " + document.getBoolean("covidStatus"));
-                    if (document.exists()) {
-                        Log.d("Success", "DocumentSnapshot data: " + document.getData());
-                        //Toast.makeText(loginActivity.this, "Logging in...", Toast.LENGTH_SHORT).show();
-                        //covidStatus_toggle.setChecked(document.getBoolean("covidStatus"));
+            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        //Log.d("Valid Location doc", document.getId() + ", Status: " + document.getBoolean("covidStatus"));
+                        if (document.exists()) {
+                            Log.d("Success", "DocumentSnapshot data: " + document.getData());
+                            //Toast.makeText(loginActivity.this, "Logging in...", Toast.LENGTH_SHORT).show();
+                            //covidStatus_toggle.setChecked(document.getBoolean("covidStatus"));
 
-                        Log.d("Covid Status", document.getBoolean("covidStatus") + "");
-                        //secondFragment sf = ;
-                        //Bundle args = new Bundle();
-                        //args.putBoolean("covidStatus", document.getBoolean("covidStatus"));
-                        //sf.setArguments(args);
+                            Log.d("Covid Status", document.getBoolean("covidStatus") + "");
+                            //secondFragment sf = ;
+                            //Bundle args = new Bundle();
+                            //args.putBoolean("covidStatus", document.getBoolean("covidStatus"));
+                            //sf.setArguments(args);
 
-                        //Intent intent = new Intent(getActivity(), secondFragment.class);
-                        //intent.putExtra("covidStatus", covidStatus_toggle.isChecked());
+                            //Intent intent = new Intent(getActivity(), secondFragment.class);
+                            //intent.putExtra("covidStatus", covidStatus_toggle.isChecked());
+                        } else {
+                            Toast.makeText(getContext(), "Logging in...", Toast.LENGTH_SHORT).show();
+                            ;
+                        }
+                    } else {
+                        Log.d("Error", "Failed with ", task.getException());
                     }
-                    else {
-                        Toast.makeText(getContext(), "Logging in...", Toast.LENGTH_SHORT).show();;
-                    }
-                } else {
-                    Log.d("Error", "Failed with ", task.getException());
                 }
-            }
-        });
+            });
+        }
+        catch(RuntimeException e){
+            Log.d("Runtime Error", e.getLocalizedMessage());
+        }
 
         /*thirdFragment sf = new thirdFragment();
                         Bundle args = new Bundle();

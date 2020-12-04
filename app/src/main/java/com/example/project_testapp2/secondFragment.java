@@ -117,8 +117,8 @@ public class secondFragment extends Fragment implements OnMapReadyCallback, Goog
                 .build();
         locationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(5000)
-                .setFastestInterval(5000);
+                .setInterval(1000*60*60)
+                .setFastestInterval(1000*60*60);
 
         sp_login = getActivity().getSharedPreferences("loginInfo", MODE_PRIVATE);
 
@@ -224,8 +224,7 @@ public class secondFragment extends Fragment implements OnMapReadyCallback, Goog
                 //coordinatesTextView.setText(location.getLatitude() + "|" + location.getLongitude());
                 Log.d("TS", "" + location.getLatitude() + "|" + location.getLongitude());
             }
-            LocationServices.FusedLocationApi.requestLocationUpdates(
-                        googleApiClient, locationRequest, this);
+            //LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
         }
         catch (SecurityException s){
             Log.d("TS","Not able to run location services...");
@@ -235,7 +234,7 @@ public class secondFragment extends Fragment implements OnMapReadyCallback, Goog
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == 123)
-            if(grantResults.length == 1&& grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            if(grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 onConnected(new Bundle());
     }
 
@@ -252,7 +251,7 @@ public class secondFragment extends Fragment implements OnMapReadyCallback, Goog
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.d("LocationChanged", location.getLatitude() + "|" + location.getLongitude());
+        /*Log.d("LocationChanged", location.getLatitude() + "|" + location.getLongitude());
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference locationsRef = db.collection("Locations");
         DocumentReference newCityRef = db.collection("cities").document();
@@ -266,7 +265,7 @@ public class secondFragment extends Fragment implements OnMapReadyCallback, Goog
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
-                    Log.d("Valid Location doc", document.getId() + ", Status: " + document.getBoolean("covidStatus"));
+                    //Log.d("Valid Location doc", document.getId() + ", Status: " + document.getBoolean("covidStatus"));
                     if (document.exists()) {
                         Log.d("Success", "DocumentSnapshot data: " + document.getData());
                         data.put("covidStatus", document.getBoolean("covidStatus"));
@@ -300,7 +299,7 @@ public class secondFragment extends Fragment implements OnMapReadyCallback, Goog
 
             }
         });
-        Log.d("LocationData", data.toString());
+        Log.d("LocationData", data.toString());*/
     }
 
     @Override
