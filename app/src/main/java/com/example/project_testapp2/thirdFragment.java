@@ -102,6 +102,12 @@ public class thirdFragment extends Fragment {
                         Log.d("Success", "DocumentSnapshot data: " + document.getData());
                         //Toast.makeText(loginActivity.this, "Logging in...", Toast.LENGTH_SHORT).show();
                         covidStatus_toggle.setChecked(document.getBoolean("covidStatus"));
+                        /*secondFragment sf = new secondFragment();
+                        Bundle args = new Bundle();
+                        args.putBoolean("covidStatus", covidStatus_toggle.isChecked());
+                        sf.setArguments(args);*/
+                        //Intent intent = new Intent(getActivity(), secondFragment.class);
+                        //intent.putExtra("covidStatus", covidStatus_toggle.isChecked());
                     }
                     else {
                         Toast.makeText(getContext(), "Logging in...", Toast.LENGTH_SHORT).show();;
@@ -141,7 +147,6 @@ public class thirdFragment extends Fragment {
                             }
                         }
                     });
-
                 }
                 else {
                     //update firestore locations record set covidStatus field : False

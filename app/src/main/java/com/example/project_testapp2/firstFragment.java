@@ -1,16 +1,27 @@
 package com.example.project_testapp2;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -48,6 +59,8 @@ public class firstFragment extends Fragment {
     private TextView deaths_today;
     private TextView active_today;
     private TextView recovered_today;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private SharedPreferences sp_login;
 
     private String JsonText;
 
@@ -76,6 +89,7 @@ public class firstFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sp_login = getActivity().getSharedPreferences("loginInfo", Context.MODE_PRIVATE);
         //cases_today = (TextView) findViewById(R.id.active_today_label);
 
         /*if (getArguments() != null) {
@@ -104,6 +118,43 @@ public class firstFragment extends Fragment {
         //"https://api.covid19api.com/country/united-arab-emirates?from=2020-10-31T00:00:00Z&to=2020-10-31T23:59:59Z"
 
         new JsonTask().execute(MessageFormat.format("https://api.covid19api.com/country/united-arab-emirates?from={0}&to={1}", past_date, today));
+
+
+        final DocumentReference docRef = db.collection("users").document(sp_login.getString("username", ""));
+
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    Log.d("Valid Location doc", document.getId() + ", Status: " + document.getBoolean("covidStatus"));
+                    if (document.exists()) {
+                        Log.d("Success", "DocumentSnapshot data: " + document.getData());
+                        //Toast.makeText(loginActivity.this, "Logging in...", Toast.LENGTH_SHORT).show();
+                        //covidStatus_toggle.setChecked(document.getBoolean("covidStatus"));
+
+                        Log.d("Covid Status", document.getBoolean("covidStatus") + "");
+                        //secondFragment sf = ;
+                        //Bundle args = new Bundle();
+                        //args.putBoolean("covidStatus", document.getBoolean("covidStatus"));
+                        //sf.setArguments(args);
+
+                        //Intent intent = new Intent(getActivity(), secondFragment.class);
+                        //intent.putExtra("covidStatus", covidStatus_toggle.isChecked());
+                    }
+                    else {
+                        Toast.makeText(getContext(), "Logging in...", Toast.LENGTH_SHORT).show();;
+                    }
+                } else {
+                    Log.d("Error", "Failed with ", task.getException());
+                }
+            }
+        });
+
+        /*thirdFragment sf = new thirdFragment();
+                        Bundle args = new Bundle();
+                        args.putBoolean("covidStatus", covidStatus_toggle.isChecked());
+                        sf.setArguments(args);*/
 
         return root;
     }

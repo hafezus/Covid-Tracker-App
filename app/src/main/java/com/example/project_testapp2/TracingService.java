@@ -4,8 +4,15 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.icu.util.Calendar;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.IBinder;
@@ -16,8 +23,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
@@ -34,6 +43,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.core.QueryListener;
 import com.google.protobuf.NullValue;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -41,19 +51,26 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class TracingService extends Service {
+public class TracingService extends Service implements LocationListener {
 
     final static String SERVICE_LOG = "Covid Tracer Service";
     private MainApp app;
     private Timer timer;
+    private Timer timer2;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+    //protected LocationListener locationListener;
+    //GPSTracker mGPS = new GPSTracker(this);
     //private SharedPreferences sp_login;
+    //double currentLat;
+    //double currentLng;
 
     public TracingService() {
     }
@@ -66,10 +83,17 @@ public class TracingService extends Service {
     }
 
     @Override
-    public void onCreate(){
+    public void onCreate() {
         Log.v(SERVICE_LOG, "Service created");
         app = (MainApp) getApplication();
         //sp_login = getSharedPreferences("loginInfo", MODE_PRIVATE);
+
+        //locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        //locationListener = new MyLocationListener();
+
+
+
+
         startTimer();
     }
 
@@ -104,7 +128,6 @@ public class TracingService extends Service {
                     // display notification
                     final long yourmilliseconds = System.currentTimeMillis();
 
-
                     CollectionReference locationsRef = db.collection("Locations");
                     Query positiveCases = locationsRef.whereEqualTo("covidStatus", true);
 
@@ -113,8 +136,9 @@ public class TracingService extends Service {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
+                                app.latestLocations.clear();
                                 for (QueryDocumentSnapshot document : task.getResult()) {
-                                    if((System.currentTimeMillis() - document.getTimestamp("timestamp").getSeconds()*1000) <= 259200000){ //259200 is 3 days in seconds
+                                    if ((System.currentTimeMillis() - document.getTimestamp("timestamp").getSeconds() * 1000) <= 259200000) { //259200 is 3 days in seconds
                                         Log.d("Positive case", document.getString("username"));
 
                                         //1,606,851,792,000
@@ -144,8 +168,33 @@ public class TracingService extends Service {
                 //Store into db here as well
                 //sendNotification(/*newFeed,*/ currentTime);
                 try {
-                    for(CovidEntry entry : app.latestLocations){
-                        Log.d(SERVICE_LOG, entry.getLat() + ", " +  entry.getLng() + ", " + entry.getTimestamp());
+                    for (CovidEntry entry : app.latestLocations) {
+                        Log.d(SERVICE_LOG, entry.getLat() + ", " + entry.getLng() + ", " + entry.getTimestamp());
+                    }
+                } catch (NullPointerException e) {
+                    Log.d("ERROR", "latestLocations is empty");
+                }
+            }
+
+
+        };
+
+        TimerTask task2 = new TimerTask() {
+
+            @Override
+            public void run() {
+                Log.v(SERVICE_LOG, "Timer task started");
+                if (app != null) {
+                    final long yourmilliseconds = System.currentTimeMillis();
+                    CollectionReference locationsRef = db.collection("Locations");
+                    //1) get current location
+                    //2) send current location coordinates, timestamp, and COVID status
+                    //3) check if current in COVID-positive range and send notification if true
+                }
+
+                try {
+                    for (CovidEntry entry : app.latestLocations) {
+                        Log.d(SERVICE_LOG, entry.getLat() + ", " + entry.getLng() + ", " + entry.getTimestamp());
                     }
                 } catch (NullPointerException e) {
                     Log.d("ERROR", "latestLocations is empty");
@@ -159,6 +208,11 @@ public class TracingService extends Service {
         int delay = 1000;      // 1 second
         int interval = 5 * 1000;   // updates 5 seconds
         timer.schedule(task, delay, interval);
+
+        /*timer2 = new Timer(true);
+        //int delay = 1000;      // 1 second
+        int interval2 = 60* 60*1000;   // updates 1 hour
+        timer2.schedule(task, delay, interval);*/
     }
 
     private void stopTimer() {
@@ -211,10 +265,21 @@ public class TracingService extends Service {
 
         startForeground(NOTIFICATION_ID, notification); //Also allow permission for foreground service in Manifest.xml
     }
+    @Override
+    public void onLocationChanged(Location location) {
+    }
+
 
     private void saveCase(/*String covidCase, */long timeinmillis)
     {
 
     } // end class saveContact
 
+        @Override
+        public void onProviderDisabled(String provider) {}
+
+        @Override
+        public void onProviderEnabled(String provider) {}
+
 }
+
