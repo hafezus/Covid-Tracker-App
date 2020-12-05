@@ -64,6 +64,7 @@ Using Java/Android Studio for CMP354 -- Mobile Application Development -- Final 
 + Firestore data access expiry will disable DB access by the App. App will crash
 
 <hr>
+
 ### Sources used:
 -------------------
 
