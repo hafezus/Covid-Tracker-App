@@ -1,14 +1,14 @@
 # Covid-Tracker-App
-Using Java/Android Studio for CMP343 -- Mobile Application Development -- Final Project -- Dr. Tamer Shanableh 
+Using Java/Android Studio for CMP354 -- Mobile Application Development -- Final Project -- Dr. Tamer Shanableh 
 
-## Before running the app, initial Setup
+h2 Before running the app, initial Setup
 
 * Make sure to allow location access always from your Virtual Device
 * Allow app to use device storage
 * Ensure Android SDK 29 or above is used
 * **Note:** The permission is not prompted on launching the app. This must be set by the user in settings
 <hr>
-## About the app
+# About the app
 
 1. I have made three accounts on the Database. You may use any of these:
         + username: hafezus password: abc
@@ -29,7 +29,7 @@ Using Java/Android Studio for CMP343 -- Mobile Application Development -- Final 
 10. The app also has a logout feature
 
 <hr>
-## How to use the app
+# How to use the app
 
 1. Make sure the permissions are set up manually from the emulator before running the app.
 2. Enter app
@@ -41,9 +41,41 @@ Using Java/Android Studio for CMP343 -- Mobile Application Development -- Final 
 8. You may logout to stop running the background service for live-tracking
 
 <hr>
-## Persistent bugs & sidenotes
+# Persistent bugs & sidenotes
 
 + Broadcast reciever notifies only when exiting app from the map view, or entering the map (this applies when there is a transition in states)
 + The API fetches latest data, but app may crash if it fails to fetch this data (Network Error, thread-handling, etc)
 + Firestore data access expiry will disable DB access by the App. App will crash
-+ 
+
+<hr>
+# Sources used:
+
+1. Geofence
+https://developer.android.com/training/location/geofencing.html
+https://github.com/trulymittal/Geofencing/tree/master/app/src
+https://www.youtube.com/watch?v=nmAtMqljH9M&ab_channel=yoursTRULY
+https://3en.cloud/insight/2018/4/24/setting-up-geofencing-with-notifications-on-android
+
+2. Firestore
+https://firebase.google.com/docs/firestore/manage-data/add-data
+https://stackoverflow.com/questions/51245784/is-it-possible-to-create-a-new-document-automatically-in-cloud-firestore
+
+3. Fragments/Navigation Drawers
+https://www.youtube.com/watch?v=pucQs0TUe0I&ab_channel=Stevdza-San
+
+4. COVID API data
+https://covid19api.com/
+https://documenter.getpostman.com/view/10808728/SzS8rjbc
+
+5. Location/GPS
+Chgps_U20_gpsactivity (From study material in CMP354 by Dr. Tamer)
+https://stackoverflow.com/questions/45215637/how-to-get-current-location-in-background-service-in-android
+https://stackoverflow.com/questions/61092325/get-current-location-with-background-service-android
+https://droidbyme.medium.com/get-current-location-using-gps-network-provider-d2915f2ec7a5
+
+6. Services/Notifications/Pending Intents
+ch10_U20_newsreader (From study material in CMP354 by Dr. Tamer)
+ch4_ex11_Reminder (From study material in CMP354 by Dr. Tamer)
+https://developer.android.com/reference/android/app/PendingIntent
+
+*Note: These were the primary sources that I used. I have not included the sources that I have found but ended up not being useful.*
