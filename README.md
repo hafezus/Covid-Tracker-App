@@ -2,6 +2,7 @@
 -------------------
 
 Using Java/Android Studio for CMP354 -- Mobile Application Development -- Final Project -- Dr. Tamer Shanableh 
+<hr>
 
 ### Before running the app, initial Setup
 -------------------
@@ -34,7 +35,7 @@ Using Java/Android Studio for CMP354 -- Mobile Application Development -- Final 
 10. The app also has a logout feature
 <hr>
 
-# How to use the app
+### How to use the app
 -------------------
 
 1. Make sure the permissions are set up manually from the emulator before running the app.
@@ -47,6 +48,7 @@ Using Java/Android Studio for CMP354 -- Mobile Application Development -- Final 
 8. You may logout to stop running the background service for live-tracking
 
 <hr>
+
 ### Persistent bugs & sidenotes
 -------------------
 
