@@ -1,15 +1,16 @@
 # Covid-Tracker-App
+-------------------
 Using Java/Android Studio for CMP354 -- Mobile Application Development -- Final Project -- Dr. Tamer Shanableh 
 
-h2 Before running the app, initial Setup
-
+# Before running the app, initial Setup
+-------------------
 * Make sure to allow location access always from your Virtual Device
 * Allow app to use device storage
 * Ensure Android SDK 29 or above is used
 * **Note:** The permission is not prompted on launching the app. This must be set by the user in settings
 <hr>
 # About the app
-
+-------------------
 1. I have made three accounts on the Database. You may use any of these:
         + username: hafezus password: abc
         + username: testuser password: asd
@@ -30,7 +31,7 @@ h2 Before running the app, initial Setup
 
 <hr>
 # How to use the app
-
+-------------------
 1. Make sure the permissions are set up manually from the emulator before running the app.
 2. Enter app
 3. Enter login credentials (Only the above three accounts are registered)
@@ -42,14 +43,14 @@ h2 Before running the app, initial Setup
 
 <hr>
 # Persistent bugs & sidenotes
-
+-------------------
 + Broadcast reciever notifies only when exiting app from the map view, or entering the map (this applies when there is a transition in states)
 + The API fetches latest data, but app may crash if it fails to fetch this data (Network Error, thread-handling, etc)
 + Firestore data access expiry will disable DB access by the App. App will crash
 
 <hr>
 # Sources used:
-
+-------------------
 1. Geofence
 https://developer.android.com/training/location/geofencing.html
 https://github.com/trulymittal/Geofencing/tree/master/app/src
