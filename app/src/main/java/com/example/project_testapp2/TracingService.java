@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -28,8 +29,14 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofenceStatusCodes;
+import com.google.android.gms.location.GeofencingClient;
+import com.google.android.gms.location.GeofencingEvent;
+import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
@@ -72,6 +79,11 @@ public class TracingService extends Service implements LocationListener {
     private LocationRequest locationRequest;
     private SharedPreferences sp_login;
 
+    private static final float Geofence_Radius = 1000;
+    private String GEOFENCE_ID = "SOME_GEOFENCE_ID";
+
+    private GeofenceHelper geofenceHelper;
+
 
     protected MyLocationListener locationListener;
 
@@ -97,11 +109,11 @@ public class TracingService extends Service implements LocationListener {
         app = (MainApp) getApplication();
         sp_login = getApplicationContext().getSharedPreferences("loginInfo", MODE_PRIVATE);
         locationListener = new MyLocationListener(googleApiClient, sp_login, getApplicationContext());
-        /*googleApiClient = new GoogleApiClient.Builder(getApplication().getApplicationContext())
+        googleApiClient = new GoogleApiClient.Builder(getApplication().getApplicationContext())
                 .addApi(LocationServices.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();*/
+                .addConnectionCallbacks(this.locationListener)
+                .addOnConnectionFailedListener(this.locationListener)
+                .build();
         locationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(1000*60*60)
@@ -115,7 +127,8 @@ public class TracingService extends Service implements LocationListener {
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000*60*30, 0, locationListener);
         //LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, (com.google.android.gms.location.LocationListener) locationListener);
         //sp_login = getSharedPreferences("loginInfo", MODE_PRIVATE);
-
+        //GeofencingClient geofencingClient = LocationServices.getGeofencingClient(getApplicationContext());
+        geofenceHelper = new GeofenceHelper(getApplicationContext());
         startTimer();
     }
 
@@ -214,10 +227,12 @@ public class TracingService extends Service implements LocationListener {
                 Log.v(SERVICE_LOG, "Timer task started");
                 if (app != null && googleApiClient.isConnected()) {
                     final long yourmilliseconds = System.currentTimeMillis();
-                    CollectionReference locationsRef = db.collection("Locations");
+                    /*CollectionReference locationsRef = db.collection("Locations");*/
                     //1) get current location
                     //2) send current location coordinates, timestamp, and COVID status
                     //3) check if current in COVID-positive range and send notification if true
+
+                    sendNotification();
                 }
 
                 try {
@@ -237,10 +252,9 @@ public class TracingService extends Service implements LocationListener {
         int interval = 5 * 1000;   // updates 5 seconds
         timer.schedule(task, delay, interval);
 
-        /*timer2 = new Timer(true);
-        //int delay = 1000;      // 1 second
-        int interval2 = 60* 60*1000;   // updates 1 hour
-        timer2.schedule(task, delay, interval);*/
+        timer2 = new Timer(true);
+        int interval2 = 6*1000;   // updates 1 min
+        timer2.schedule(task2, delay, interval2);
     }
 
     private void stopTimer() {
@@ -249,7 +263,7 @@ public class TracingService extends Service implements LocationListener {
         }
     }
 
-    private void sendNotification(/*String cases, */Date currentTime)
+    private void sendNotification(/*String cases, Date currentTime*/)
     {
         //Uri viewUri = Uri.parse("https://www.worldometers.info/coronavirus/");
         //Intent viewIntent = new Intent(Intent.ACTION_VIEW, viewUri);
@@ -260,14 +274,15 @@ public class TracingService extends Service implements LocationListener {
         // create the intent for the notification
 
         // create the pending intent
-        int flags = PendingIntent.FLAG_UPDATE_CURRENT;
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, flags);
+        //int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+        /*PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, flags);*/
 
         // create the variables for the notification
-
+        //geofenceHelper.getGeofence(GEOFENCE_ID, latLng, radius, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT);
+        new secondFragment().addGeofence(new LatLng(0,0), 0);
         int icon = R.drawable.ic_locations_icon; //CHANGE ICON
-        CharSequence tickerText = "Nearby Case Traced!!";
-        CharSequence contentTitle = currentTime.toString();
+        CharSequence tickerText = "COVID ALERT!";
+        CharSequence contentTitle = "Joe Mama";
         CharSequence contentText = "You are currently in a COVID-prone area";
 
         NotificationChannel notificationChannel =
@@ -276,7 +291,8 @@ public class TracingService extends Service implements LocationListener {
         NotificationManager manager = (NotificationManager) getSystemService(this.NOTIFICATION_SERVICE);
         manager.createNotificationChannel(notificationChannel);
 
-
+        GeofenceHelper geofenceHelper = new GeofenceHelper(getApplicationContext());;
+        PendingIntent pendingIntent = geofenceHelper.getPendingIntent();
         // create the notification and set its data
         Notification notification = new NotificationCompat
                 .Builder(this, "Channel_ID")
@@ -295,8 +311,9 @@ public class TracingService extends Service implements LocationListener {
     }
     @Override
     public void onLocationChanged(Location location) {
-    }
 
+
+    }
 
     private void saveCase(/*String covidCase, */long timeinmillis)
     {
@@ -304,4 +321,3 @@ public class TracingService extends Service implements LocationListener {
     } // end class saveContact
 
 }
-

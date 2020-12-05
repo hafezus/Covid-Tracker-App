@@ -27,19 +27,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <receiver
-            android:name=".GeofenceReceiver"
-            android:enabled="true"
-            android:exported="false"
+            android:name=".GeofenceBroadcastReceiver"
             android:allowBackup="true"
             android:directBootAware="true"
-            >
-        </receiver>
-        <!-- <receiver android:name=".GeofenceBroadcastReceiver"/> -->
+            android:enabled="true"
+            android:exported="false"></receiver> <!-- <receiver android:name=".GeofenceBroadcastReceiver"/> -->
         <service
             android:name=".TracingService"
             android:enabled="true"
             android:exported="true" />
-
         <!--
         <uses-library
             android:name="com.google.android.wearable"

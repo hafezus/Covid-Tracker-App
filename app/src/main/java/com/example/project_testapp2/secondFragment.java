@@ -77,7 +77,7 @@ public class secondFragment extends Fragment implements OnMapReadyCallback, Goog
     private String mParam2;
     private GoogleMap mMap;
     private MainApp app;
-    private List geofenceList = new ArrayList();
+    public List geofenceList = new ArrayList();
     private GeofencingClient geofencingClient;
     private static final float Geofence_Radius = 1000;
     private Marker geoFence;
@@ -88,6 +88,11 @@ public class secondFragment extends Fragment implements OnMapReadyCallback, Goog
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
     private SharedPreferences sp_login;
+    private GeofenceHelper geofenceHelper;
+    private String GEOFENCE_ID = "SOME_GEOFENCE_ID";
+    private int FINE_LOCATION_ACCESS_REQUEST_CODE = 10001;
+    private int BACKGROUND_LOCATION_ACCESS_REQUEST_CODE = 10002;
+
 
 
     private PendingIntent createGeofencePendingIntent() {
@@ -117,8 +122,11 @@ public class secondFragment extends Fragment implements OnMapReadyCallback, Goog
                 .build();
         locationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(1000*60*60)
-                .setFastestInterval(1000*60*60);
+                .setInterval(1000 * 60 * 60)
+                .setFastestInterval(1000 * 60 * 60);
+        geofenceHelper = new GeofenceHelper(this.getContext());
+
+
 
         sp_login = getActivity().getSharedPreferences("loginInfo", MODE_PRIVATE);
 
@@ -129,15 +137,18 @@ public class secondFragment extends Fragment implements OnMapReadyCallback, Goog
         app = (MainApp) getActivity().getApplication();
         final View root = inflater.inflate(R.layout.fragment_second, container, false);
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        //SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
 
+        SupportMapFragment mapFragment = (SupportMapFragment) this.getChildFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
         //Log.d("Covid Status passed",savedInstanceState.get("covidStatus") + "");
 
         Bundle args = this.getArguments();
-        if(args!=null){
+        if (args != null) {
             Log.d("BundleVals", args.getBoolean("covidStatus") + "");
         }
         //Log.d("BundleVals", savedInstanceState + "");
@@ -175,6 +186,13 @@ public class secondFragment extends Fragment implements OnMapReadyCallback, Goog
                         .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
                                 Geofence.GEOFENCE_TRANSITION_EXIT)
                         .build());
+                addCircle(new LatLng(i.getLat(), i.getLng()), Geofence_Radius);
+                addGeofence(new LatLng(i.getLat(), i.getLng()), Geofence_Radius);
+
+
+                /*Geofence geofence = geofenceHelper.getGeofence(GEOFENCE_ID, new LatLng(i.getLat(), i.getLng()), Geofence_Radius, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT);
+                GeofencingRequest geofencingRequest = geofenceHelper.getGeofencingRequest(geofence);
+                PendingIntent pendingIntent = geofenceHelper.getPendingIntent();
 
                 CircleOptions circleOptions = new CircleOptions()
                         .center(new LatLng(i.getLat(), i.getLng()))
@@ -182,6 +200,30 @@ public class secondFragment extends Fragment implements OnMapReadyCallback, Goog
                         .fillColor(Color.argb(100, 135, 206, 250))
                         .radius(Geofence_Radius);
                 geoFenceLimits = mMap.addCircle(circleOptions);
+                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+                geofencingClient.addGeofences(geofencingRequest, pendingIntent)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d("TAG", "onSuccess: Geofence Added...");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                String errorMessage = geofenceHelper.getErrorString(e);
+                                Log.d("TAG", "onFailure: " + errorMessage);
+                            }
+                        });
 
 
                 GeofencingRequest request = new GeofencingRequest.Builder()
@@ -200,23 +242,29 @@ public class secondFragment extends Fragment implements OnMapReadyCallback, Goog
                                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
                                         Geofence.GEOFENCE_TRANSITION_EXIT)
                                 .build())  // add a Geofence
-                        .build();
+                        .build();*/
 
 
             }
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DUBAI, 10.5f));
         }
     }
-
-
-
+    private void addCircle(LatLng latLng, float radius) {
+        CircleOptions circleOptions = new CircleOptions();
+        circleOptions.center(latLng);
+        circleOptions.radius(radius);
+        circleOptions.strokeColor(Color.argb(255, 255, 0,0));
+        circleOptions.fillColor(Color.argb(64, 255, 0,0));
+        circleOptions.strokeWidth(4);
+        mMap.addCircle(circleOptions);
+    }
 
     private Marker geoFenceMarker;
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         if (ContextCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-            ActivityCompat.requestPermissions(this.getActivity(),new String[]{Manifest.permission.ACCESS_FINE_LOCATION},123);
+            ActivityCompat.requestPermissions(this.getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 123);
 
         try {
             Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
@@ -225,16 +273,15 @@ public class secondFragment extends Fragment implements OnMapReadyCallback, Goog
                 Log.d("TS", "" + location.getLatitude() + "|" + location.getLongitude());
             }
             //LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
-        }
-        catch (SecurityException s){
-            Log.d("TS","Not able to run location services...");
+        } catch (SecurityException s) {
+            Log.d("TS", "Not able to run location services...");
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == 123)
-            if(grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 onConnected(new Bundle());
     }
 
@@ -251,55 +298,7 @@ public class secondFragment extends Fragment implements OnMapReadyCallback, Goog
 
     @Override
     public void onLocationChanged(Location location) {
-        /*Log.d("LocationChanged", location.getLatitude() + "|" + location.getLongitude());
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference locationsRef = db.collection("Locations");
-        DocumentReference newCityRef = db.collection("cities").document();
-        final Map<String, Object> data = new HashMap<>();
-        final DocumentReference docRef = db.collection("users").document(sp_login.getString("username", ""));
 
-        final Boolean tempBool = false;
-        final Location tempLoc = new Location(location);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    //Log.d("Valid Location doc", document.getId() + ", Status: " + document.getBoolean("covidStatus"));
-                    if (document.exists()) {
-                        Log.d("Success", "DocumentSnapshot data: " + document.getData());
-                        data.put("covidStatus", document.getBoolean("covidStatus"));
-                        data.put("location", new GeoPoint(tempLoc.getLatitude(), tempLoc.getLongitude()));
-                        data.put("username", sp_login.getString("username", ""));
-                        data.put("timestamp", new Timestamp(new Date(System.currentTimeMillis())));
-                        Log.d("TransactionComplete", "Completed");
-                        db.collection("Locations")
-                                .add(data)
-                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                    @Override
-                                    public void onSuccess(DocumentReference documentReference) {
-                                        Log.d("TAG", "DocumentSnapshot written with ID: " + documentReference.getId());
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("TAG", "Error adding document", e);
-                                    }
-                                });
-
-                    }
-                    else {
-                        Toast.makeText(getContext(), "Logging in...", Toast.LENGTH_SHORT).show();;
-                    }
-                } else {
-                    Log.d("Error", "Failed with ", task.getException());
-                }
-
-
-            }
-        });
-        Log.d("LocationData", data.toString());*/
     }
 
     @Override
@@ -316,4 +315,37 @@ public class secondFragment extends Fragment implements OnMapReadyCallback, Goog
         }
         super.onPause();
     }
+
+    public void addGeofence(LatLng latLng, float radius) {
+
+        Geofence geofence = geofenceHelper.getGeofence(GEOFENCE_ID, latLng, radius, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT);
+        GeofencingRequest geofencingRequest = geofenceHelper.getGeofencingRequest(geofence);
+        PendingIntent pendingIntent = geofenceHelper.getPendingIntent();
+
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        geofencingClient.addGeofences(geofencingRequest, pendingIntent)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("TAG", "onSuccess: Geofence Added...");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        String errorMessage = geofenceHelper.getErrorString(e);
+                        Log.d("TAG", "onFailure: " + errorMessage);
+                    }
+                });
+    }
+
 }
