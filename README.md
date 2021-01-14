@@ -1,4 +1,4 @@
-# Covid-Tracker-App
+# Covid-Tracker-App (Beta)
 -------------------
 
 Using Java/Android Studio for CMP354 -- Mobile Application Development -- Final Project -- Dr. Tamer Shanableh 
